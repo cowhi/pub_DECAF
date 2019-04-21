@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Microsoft visual studio code config files
+.vscode/
+
+# Do not save all the logfiles
+logs/*
+
+# System stuff
+.DS_Store
