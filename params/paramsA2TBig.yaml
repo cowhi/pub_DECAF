@@ -1,0 +1,211 @@
+# Contains all experiment settings so that every experiment can be reproduced exactly
+
+#######################################################
+###               EXPERIMENT SETTINGS               ###
+#######################################################
+# Source of experiment to continue training from last checkpoint
+source_dir: null # ~/pub_DECAF/logs/Atari/Pong/2019-.../
+# Should we use the GPU (not necessary for small networks)
+use_gpu: true
+# Select the GPU for this experiment
+gpu_device: '0'
+# Seed for random initialization [best to use a different one for each run]
+random_seed: 13
+# Logging to 'stdout' (good for testing) or 'file' (good for reproduce)
+log_type: stdout
+# Level logging output ('DEBUG', 'INFO', etc.)
+log_level: INFO
+# After how many eras do we log 
+log_interval: 1
+# What is the file prefix when saving logs
+log_prefix: log
+# Number of repitions of the experiment
+runs: 1
+# Number of eras within an experiment (1 era = 1 training + 1 eval epoch)
+eras: 20
+# Style of the interval counter for train epochs (steps, episodes)
+#train_interval_style: steps
+train_style: steps
+# Interval size for the training epoch (250000) (TOTALSTEPS ~ eras * train_interval)
+train_interval: 250000
+# Style of the interval counter for eval epochs (steps, episodes)
+#eval_interval_style: episodes
+eval_style: episodes
+# Interval size for the training epoch (125000)
+eval_interval: 10
+# Show the environment during training
+visualize_train: false
+# Show the environment during testing
+visualize_test: false
+
+#######################################################
+###               ENVIRONMENT SETTINGS              ###
+#######################################################
+# Type of the environment that we want to explore
+env_type: Atari
+# Environment to load (Atari games without version!) (Pong, Pooyan, SpaceInvaders, Qbert)
+env_name: Pong
+# Number of steps until the environment resets (only responds to values smaller than env max, `null` is env max)
+max_steps_episode: 27000
+# Uses sticky actions or not
+sticky_actions: false
+# Transform environment observation to square in this dimension if not `null` (Atari: 84)
+warp_size: 84
+# Stack environment observations to form a state in this dimension if not `null` (Atari: 4)
+frame_stack: 4
+# Make sure that loss of life doesn't end the episode to avoid strange reward alocation (Atari: true)
+episode_life: true
+# Initializes every episode with a random number of noop steps if not `null` (max is init_noops) (Atari: 30)
+init_noops: 30
+# Clips the reward to the given range if not `null` (Atari: 1)
+clip_reward: 1
+# Number of available actions for the agent [minimal, all]
+action_space: minimal
+# Sets a target value to abort training if reached if not `null` (CartPole-v0:195)
+env_target: null
+# Number of frames that are skipped during training
+skip_frames: 4
+# Set this to use manipulated environment for pong
+blur: false
+# Select which area should be blurred
+blur_area:
+    - 0  # upper half: 14, lower: 46, middle: 30
+    - 0  # upper half: 45, lower: 77  middle: 61
+    - 0  # 13
+    - 0  # 70
+# Select color to be used in area for greyscale (action selection)
+blur_color: 107  # Pong: 107
+# Select color to be used when rendering
+blur_color_render: [0, 0, 0]  # [144, 72, 17]
+
+
+
+#######################################################
+###                 AGENT SETTINGS                  ###
+#######################################################
+# Agent type (A2T or DQN)
+agent_type: A2T
+# Agent extension
+double_dqn: false
+# Agent extension
+dueling: false
+# Number of examples that are drawn from the memory for every training step
+batch_size: 32
+# Train the agent after this many actions (Atari:4, Classic:1)
+train_frequency: 4
+# Update horizon for n-step updates
+update_horizon: 1
+# Frequency of the summary writer
+summary_frequency: 5000
+# Weights to init the agent
+init_weights: null # ~/pub_DECAF/pretrained/Atari/Pong/checkpoints/tf_ckpt-199
+# What was used to generate the weights (null or RL2go or dopamine)
+init_from: null
+
+
+#######################################################
+###                 POLICY SETTINGS                 ###
+#######################################################
+# Set the policy type for the agent [epsilon-decay, boltzmann]
+policy: epsilon-decay
+# Parameter to work with
+policy_factor: eps
+# Starting value for the selected factor
+epsilon_start: 1.0
+# Minimum value for the selected factor
+epsilon_min: 0.1
+# Value during testing for the selected factor (make sure the agent doesn't get stuck)
+epsilon_eval: 0.05
+# Factor decay over this many steps
+decay_steps: 1000000
+# Factor decay over percentage of max steps
+factor_decay: null
+
+#######################################################
+###               OPTIMIZER SETTINGS                ###
+#######################################################
+# Optimizer (RMSProp or Adam)
+optimizer: RMSProp
+# Discount factor for the Q-Learning update
+gamma: 0.99
+# Learning rate of the agent (0.01)
+alpha: 0.00025
+# RMS decay
+rms_decay: 0.95
+# Momentum
+momentum: 0.0
+# optimizer epsilon to avoid zero denominator
+optimizer_epsilon: 0.00001
+# Optimizer locking
+optimizer_locking: false
+# RMS centering
+rms_centered: true
+# Adam beta1
+adam_beta1: 0.9
+# Adam beta1
+adam_beta2: 0.999
+
+#######################################################
+###                 MEMORY SETTINGS                 ###
+#######################################################
+# overall replay memory size (250000)
+memory_size: 250000
+# Minimum replay memory size before starting learning (50000)
+min_memory_size: 50000
+# Use a staging area for selecting the next sample
+use_staging: true
+# Decide if we want to save the replay memory
+memory_dump: true
+# source for memory in itialization
+memory_source: null
+# Inner organization of replay memory (None: Standard implementation)
+wrapped_memory: null
+# Maximum number of attempts allowed to draw sample
+max_sample_attempts: 1000
+# list of ReplayElements defining type of extra content to be stored 
+extra_storage_types: null
+
+#######################################################
+###                  MODEL SETTINGS                 ###
+#######################################################
+# Which model architecture to load (SimpleDQN, OriginalDQN)
+model: OriginalDQN
+# source for weight initialization
+model_source: null
+# amount of frames that constitute a state (input_depth)
+stack_size: 4
+# Frequency of updating the weights of the target network with the weights
+# from the currently trained network (0<x<1: soft updates every step, x>=1: hard updates every x steps)
+target_update_frequency: 10000
+# Make a backup of the model in this step frequency
+checkpoint_interval: 10000
+# How many checkpoints to keep
+checkpoints_keep_max: 3
+# Prefix for checkpoint files
+checkpoint_prefix: ckpt
+# How often to create a checkpoint
+checkpoint_frequency: 1
+
+#######################################################
+###                   A2T SETTINGS                  ###
+#######################################################
+# Regulates distinction between Q values
+softmax_temp: 100
+softmax_decay_steps: 500000
+softmax_min: 0.01
+# Used algorithm for implementation (dopamine or RL2go)
+pretrained_from:  # null
+    - dopamine
+    - dopamine
+    - dopamine
+    - RL2go
+    - RL2go
+    - RL2go
+# Source for the pretrained agents
+pretrained_agents:  # null
+    - /home/ruben/playground/RL2go/pretrained/Atari/Pooyan/checkpoints/tf_ckpt-199
+    - /home/ruben/playground/RL2go/pretrained/Atari/Qbert/checkpoints/tf_ckpt-199
+    - /home/ruben/playground/RL2go/pretrained/Atari/SpaceInvaders/checkpoints/tf_ckpt-199
+    - /home/ruben/playground/RL2go/pretrained/Atari/PongBlurredUpper/checkpoints/tf_ckpt-50
+    - /home/ruben/playground/RL2go/pretrained/Atari/PongBlurredMiddle/checkpoints/tf_ckpt-50
+    - /home/ruben/playground/RL2go/pretrained/Atari/PongBlurredLower/checkpoints/tf_ckpt-50
